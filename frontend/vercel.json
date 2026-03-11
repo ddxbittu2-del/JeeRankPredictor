@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm install",
+  "buildCommand": "",
   "outputDirectory": ".",
-  "framework": "static",
+  "framework": null,
   "cleanUrls": true,
   "headers": [
     {
@@ -21,7 +21,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://jee-rank-backend.onrender.com/api/$1"
+      "destination": "https://jeerankpredictor-02ne.onrender.com/api/$1"
     }
   ]
 }
