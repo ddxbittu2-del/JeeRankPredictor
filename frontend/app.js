@@ -307,6 +307,9 @@ const FormController = {
             category: AppState.formData.category,
         })
             .then((rankData) => {
+                if (!rankData) {
+                    throw new Error('Failed to get rank prediction. Please check your input and try again.');
+                }
                 AppState.predictionResult = rankData;
 
                 // Step 2: Predict colleges
@@ -320,14 +323,18 @@ const FormController = {
                 });
             })
             .then((collegesData) => {
+                if (!collegesData) {
+                    throw new Error('Failed to get college predictions. Please try again.');
+                }
                 AppState.collegesData = collegesData;
                 Loader.hide();
                 this.showResults();
             })
             .catch((error) => {
                 Loader.hide();
-                console.error('Prediction error:', error);
-                alert('Error in prediction. Please try again.');
+                console.error('❌ Prediction error:', error);
+                alert(`Error: ${error.message}`);
+
             });
     },
 
@@ -741,16 +748,30 @@ const API = {
 
     async predictColleges(payload) {
         try {
-            const response = await fetch(`${API_BASE}/api/predict-colleges`, {
+            const url = `${API_BASE}/api/predict-colleges`;
+            console.log('🔵 Calling API:', url);
+            console.log('📦 Payload:', payload);
+            
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-            if (!response.ok) throw new Error('API error');
-            return await response.json();
+            
+            console.log('📊 Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ API error response:', errorText);
+                throw new Error(`API error: ${response.status} - ${errorText}`);
+            }
+            
+            const data = await response.json();
+            console.log('✅ API response:', data);
+            return data;
         } catch (error) {
-            console.error('predictColleges error:', error);
-            return [];
+            console.error('❌ predictColleges error:', error);
+            throw error;
         }
     },
 
