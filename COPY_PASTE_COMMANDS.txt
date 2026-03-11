@@ -1,0 +1,212 @@
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                     COPY & PASTE DEPLOYMENT COMMANDS                      ║
+║                                                                            ║
+║           Just copy each command and paste in your terminal.              ║
+║           Follow them in order - they'll deploy your entire app!         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+STEP 1: PUSH TO GITHUB (Copy-paste these 3 commands, one by one)
+════════════════════════════════════════════════════════════════════════════
+
+After creating GitHub repository at https://github.com/new (name it: 
+jee-rank-predictor, make it PUBLIC), run these:
+
+
+COMMAND 1 (Replace YOUR_USERNAME with your GitHub username):
+────────────────────────────────────────────────────────────
+
+git remote add origin https://github.com/YOUR_USERNAME/jee-rank-predictor.git
+
+
+EXAMPLE (if your username is "tejasavayadav"):
+────────────────────────────────────────────────────────────
+
+git remote add origin https://github.com/tejasavayadav/jee-rank-predictor.git
+
+
+COMMAND 2:
+────────────────────────────────────────────────────────────
+
+git branch -M main
+
+
+COMMAND 3:
+────────────────────────────────────────────────────────────
+
+git push -u origin main
+
+
+⏱️  Wait 1-2 minutes for upload to complete.
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+STEP 2: DEPLOY BACKEND ON RENDER
+════════════════════════════════════════════════════════════════════════════════
+
+Visit: https://render.com
+
+Then follow these steps:
+1. Click "New +" → "Web Service"
+2. Connect GitHub repository: jee-rank-predictor
+3. Name: jee-rank-backend
+4. Environment: Python 3
+5. Region: Choose closest to you
+6. Build Command: Copy paste this EXACTLY:
+
+pip install -r requirements.txt
+
+7. Start Command: Copy paste this EXACTLY:
+
+uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+
+8. Click "Advanced"
+9. Add Environment Variables (copy-paste each one):
+
+GEMINI_API_KEY
+AIzaSyBaxFzgQ_MSmlfWAPsWu3V0GdAuYhUMJ1M
+
+GEMINI_MODEL
+gemini-2.5-flash
+
+10. Click "Create Web Service"
+
+⏱️  Wait 5-10 minutes for build and deployment to complete.
+
+Your backend URL will be:
+https://jee-rank-backend.onrender.com
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+STEP 3: DEPLOY FRONTEND ON VERCEL
+════════════════════════════════════════════════════════════════════════════════
+
+Visit: https://vercel.com
+
+Then follow these steps:
+1. Click "Add New..." → "Project"
+2. Click "Import Git Repository"
+3. Select: jee-rank-predictor
+4. Framework Preset: Other
+5. Root Directory: ./frontend
+6. Build Command: (leave EMPTY)
+7. Output Directory: (leave EMPTY)
+8. Click "Deploy"
+
+⏱️  Wait 2-5 minutes for deployment to complete.
+
+Your frontend URL will be:
+https://jee-rank-predictor.vercel.app
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+STEP 4: TEST YOUR DEPLOYMENT
+════════════════════════════════════════════════════════════════════════════════
+
+Open a terminal and run these test commands:
+
+
+TEST 1 - Backend Health Check:
+────────────────────────────────────────────────────────────
+
+curl https://jee-rank-backend.onrender.com/api/health
+
+
+TEST 2 - Prediction Test:
+────────────────────────────────────────────────────────────
+
+curl -X POST https://jee-rank-backend.onrender.com/api/predict-rank \
+  -H "Content-Type: application/json" \
+  -d '{"score": 250, "input_type": "marks", "year": 2024, "category": "GEN"}'
+
+
+TEST 3 - Gemini Status:
+────────────────────────────────────────────────────────────
+
+curl https://jee-rank-backend.onrender.com/api/gemini/status
+
+
+TEST 4 - Visit Frontend:
+────────────────────────────────────────────────────────────
+
+Open in browser:
+https://jee-rank-predictor.vercel.app
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+OPTIONAL: UPDATE CODE AFTER DEPLOYMENT
+════════════════════════════════════════════════════════════════════════════════
+
+If you make changes to your code and want to redeploy:
+
+COMMAND 1:
+git add .
+
+COMMAND 2:
+git commit -m "Your change description"
+
+COMMAND 3:
+git push origin main
+
+✅ Services will auto-redeploy from GitHub!
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+🎉 THAT'S IT! YOU'RE DONE!
+════════════════════════════════════════════════════════════════════════════════
+
+After completing all 4 steps:
+
+✨ Frontend (Vercel):      https://jee-rank-predictor.vercel.app
+✨ Backend API (Render):   https://jee-rank-backend.onrender.com
+✨ GitHub Repo:            https://github.com/YOUR_USERNAME/jee-rank-predictor
+
+Total Time: 20 minutes from now to LIVE!
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+════════════════════════════════════════════════════════════════════════════════
+
+Q: "git remote already exists" error
+A: Run this first:
+   git remote remove origin
+
+Q: Backend deployment fails
+A: Check Render dashboard → select service → Logs tab
+   Look for error messages and fix
+
+Q: Frontend can't connect to backend
+A: 1. Check backend is running:
+      curl https://jee-rank-backend.onrender.com/api/health
+   2. Check frontend/app.js line 8 has production URL
+
+Q: Port already in use locally
+A: Run:
+   lsof -i :8080
+   Kill the process or use different port
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+HELPFUL LINKS
+════════════════════════════════════════════════════════════════════════════════
+
+GitHub Docs:     https://docs.github.com
+Render Docs:     https://render.com/docs
+Vercel Docs:     https://vercel.com/docs
+Gemini Docs:     https://ai.google.dev/docs
+
+
+════════════════════════════════════════════════════════════════════════════════
+
+Generated: March 11, 2026
+Status: Ready for copy-paste deployment! 🚀
+
