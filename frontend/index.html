@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE Rank & College Predictor</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- Local stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background noise texture overlay -->
+    <div class="noise-overlay"></div>
+    
+    <!-- Progress bar for form steps -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- ============= HERO SECTION ============= -->
+        <section class="hero" id="heroSection">
+            <div class="hero-content">
+                <h1 class="hero-title" id="heroTitle">JEE RANK & COLLEGE PREDICTOR</h1>
+                <p class="hero-subtitle" id="heroSubtitle">Trained on 5 years of official JoSAA counselling data</p>
+                <button class="cta-button" onclick="FormController.showStep(1)">
+                    PREDICT NOW <span class="arrow">→</span>
+                </button>
+            </div>
+            <div class="hero-grid"></div>
+        </section>
+
+        <!-- ============= FORM SECTION ============= -->
+        <section class="form-section" id="formSection" style="display: none;">
+            <div class="form-container">
+                <!-- Step 1: Score Input -->
+                <div class="step-form" id="step1" data-step="1">
+                    <h2 class="step-title">Your Score</h2>
+                    
+                    <!-- Input type toggle -->
+                    <div class="pill-toggle" id="scoreTypeToggle">
+                        <button class="toggle-btn active" data-type="marks">Marks</button>
+                        <button class="toggle-btn" data-type="percentile">Percentile</button>
+                        <button class="toggle-btn" data-type="rank">Rank</button>
+                    </div>
+
+                    <!-- Score input -->
+                    <div class="score-input-group">
+                        <input 
+                            type="number" 
+                            id="scoreInput" 
+                            class="score-input" 
+                            placeholder="Enter your score"
+                            min="0" 
+                            max="300"
+                        >
+                        <span id="scoreLabel" class="score-label">(0-300)</span>
+                        <div class="live-preview" id="livePreview"></div>
+                    </div>
+
+                    <!-- Year selector -->
+                    <div class="year-selector">
+                        <label>Exam Year</label>
+                        <select id="yearSelect" class="select-field">
+                            <option value="2026">2026 (Predicted)</option>
+                            <option value="2025">2025 (Predicted)</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="step-nav">
+                        <button class="btn btn-next" onclick="FormController.handleStepNext(1)">
+                            Next <span class="arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Profile -->
+                <div class="step-form" id="step2" data-step="2" style="display: none;">
+                    <h2 class="step-title">Your Profile</h2>
+
+                    <!-- Category selector -->
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="categorySelect" class="select-field">
+                            <option value="GEN">General (GEN)</option>
+                            <option value="OBC-NCL">OBC-NCL</option>
+                            <option value="SC">Scheduled Caste (SC)</option>
+                            <option value="ST">Scheduled Tribe (ST)</option>
+                            <option value="EWS">Economically Weaker Section (EWS)</option>
+                            <option value="GEN-PwD">General + PwD</option>
+                            <option value="OBC-NCL-PwD">OBC-NCL + PwD</option>
+                        </select>
+                    </div>
+
+                    <!-- Seat pool toggle -->
+                    <div class="form-group">
+                        <label>Seat Pool</label>
+                        <div class="pill-toggle" id="seatPoolToggle">
+                            <button class="toggle-btn active" data-pool="GN">Gender-Neutral</button>
+                            <button class="toggle-btn" data-pool="FO">Female-Only</button>
+                        </div>
+                    </div>
+
+                    <!-- State selector -->
+                    <div class="form-group">
+                        <label>Home State / UT</label>
+                        <select id="stateSelect" class="select-field">
+                            <option value="All India">All India</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="step-nav">
+                        <button class="btn btn-back" onclick="FormController.handleStepBack(2)">
+                            <span class="arrow">←</span> Back
+                        </button>
+                        <button class="btn btn-next" onclick="FormController.handleStepNext(2)">
+                            Next <span class="arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Preferences -->
+                <div class="step-form" id="step3" data-step="3" style="display: none;">
+                    <h2 class="step-title">Your Preferences</h2>
+
+                    <!-- Institute type selection -->
+                    <div class="form-group">
+                        <label>Institute Type</label>
+                        <div class="pill-toggle" id="instituteTypeToggle">
+                            <button class="toggle-btn active" data-institute="All">All</button>
+                            <button class="toggle-btn" data-institute="IIT">IIT</button>
+                            <button class="toggle-btn" data-institute="NIT">NIT</button>
+                            <button class="toggle-btn" data-institute="IIIT">IIIT</button>
+                            <button class="toggle-btn" data-institute="GFTI">GFTI</button>
+                        </div>
+                    </div>
+
+                    <!-- Branch selection -->
+                    <div class="form-group">
+                        <label>Preferred Branches</label>
+                        <div class="branch-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="CSE" checked>
+                                <span class="checkbox-text">CSE</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="ECE" checked>
+                                <span class="checkbox-text">ECE</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="ME" checked>
+                                <span class="checkbox-text">ME</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="CE" checked>
+                                <span class="checkbox-text">CE</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="EE" checked>
+                                <span class="checkbox-text">EE</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="Chemical" checked>
+                                <span class="checkbox-text">Chemical</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="Metallurgy" checked>
+                                <span class="checkbox-text">Metallurgy</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="branch" value="Physics" checked>
+                                <span class="checkbox-text">Physics</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Navigation & Predict -->
+                    <div class="step-nav">
+                        <button class="btn btn-back" onclick="FormController.handleStepBack(3)">
+                            <span class="arrow">←</span> Back
+                        </button>
+                        <button class="btn btn-predict" onclick="FormController.handlePredict()">
+                            PREDICT <span class="arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============= RESULTS SECTION ============= -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <!-- Rank Summary Card -->
+            <div class="result-card rank-summary-card" id="rankCard">
+                <h2 class="card-title">Your Predicted Rank</h2>
+                <div class="rank-display">
+                    <div class="rank-number" id="rankNumber">--</div>
+                    <div class="rank-subtext" id="rankSubtext"></div>
+                </div>
+                <div class="rank-details">
+                    <div class="rank-detail-item">
+                        <span class="detail-label">Percentile</span>
+                        <span class="detail-value" id="percentileValue">--</span>
+                    </div>
+                    <div class="rank-detail-item">
+                        <span class="detail-label">Confidence Range</span>
+                        <span class="detail-value" id="rangeValue">--</span>
+                    </div>
+                </div>
+                <div class="rank-badge" id="rankBadge"></div>
+            </div>
+
+            <!-- Probability Gauge -->
+            <div class="result-card gauge-card" id="gaugeCard">
+                <h3 class="card-title">Overall Admission Probability</h3>
+                <div class="gauge-container">
+                    <svg class="gauge-svg" viewBox="0 0 200 120" id="gaugeSvg">
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <!-- Background arc -->
+                        <path d="M 30 100 A 70 70 0 0 1 170 100" stroke="#2a2a2a" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        <!-- Progress arc -->
+                        <path class="gauge-progress" d="M 30 100 A 70 70 0 0 1 170 100" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+                    </svg>
+                    <div class="gauge-text">
+                        <div class="gauge-percentage" id="gaugePercentage">0%</div>
+                        <div class="gauge-label">Probability</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What-If Slider -->
+            <div class="result-card what-if-card" id="whatIfCard">
+                <h3 class="card-title">Adjust Rank (What-If Analysis)</h3>
+                <div class="slider-group">
+                    <div class="slider-labels">
+                        <span id="sliderMinLabel">-20,000</span>
+                        <span id="sliderMaxLabel">+20,000</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="whatIfSlider" 
+                        class="what-if-slider" 
+                        min="-20000" 
+                        max="20000" 
+                        value="0" 
+                        step="1000"
+                    >
+                    <div class="slider-current">
+                        Current: <span id="currentRankAdjust">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter and Search Bar -->
+            <div class="result-card filter-card" id="filterCard">
+                <div class="filter-controls">
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="collegeSearch" 
+                            class="search-input" 
+                            placeholder="Search institute or branch..."
+                        >
+                    </div>
+                    <div class="filter-chips-container">
+                        <button class="filter-chip active" data-filter="All">All</button>
+                        <button class="filter-chip" data-filter="IIT">IIT</button>
+                        <button class="filter-chip" data-filter="NIT">NIT</button>
+                        <button class="filter-chip" data-filter="IIIT">IIIT</button>
+                        <button class="filter-chip" data-filter="GFTI">GFTI</button>
+                    </div>
+                </div>
+                <div class="sort-controls">
+                    <button class="sort-btn" id="sortProbability">Probability ↕</button>
+                    <button class="sort-btn" id="sortPackage">Package ↕</button>
+                    <button class="sort-btn" id="sortInstitute">Institute A-Z</button>
+                </div>
+            </div>
+
+            <!-- Colleges Prediction Table -->
+            <div class="result-card table-card" id="tableCard">
+                <h3 class="card-title">Predicted College Admissions</h3>
+                <div class="table-wrapper">
+                    <table class="data-table" id="collegesTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%">#</th>
+                                <th style="width: 20%">Institute</th>
+                                <th style="width: 15%">Program</th>
+                                <th style="width: 10%">Type</th>
+                                <th style="width: 8%">Quota</th>
+                                <th style="width: 8%">Opening</th>
+                                <th style="width: 8%">Closing</th>
+                                <th style="width: 12%">Probability</th>
+                                <th style="width: 8%">Package</th>
+                                <th style="width: 6%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="collegesTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <button class="pagination-btn" id="prevPage">← Previous</button>
+                    <span class="pagination-info" id="paginationInfo">Page 1</span>
+                    <button class="pagination-btn" id="nextPage">Next →</button>
+                </div>
+            </div>
+
+            <!-- Package Insights -->
+            <div class="result-card package-chart-card" id="packageChartCard">
+                <h3 class="card-title">Top Branches by Average Package</h3>
+                <div class="chart-container">
+                    <canvas id="packageChart" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar" id="actionBar">
+                <button class="action-btn" onclick="ShareController.downloadPDF()">
+                    <span class="icon">↓</span> Download PDF
+                </button>
+                <button class="action-btn" onclick="ShareController.shareResult()">
+                    <span class="icon">🔗</span> Share Result
+                </button>
+                <button class="action-btn" onclick="FormController.resetForm()">
+                    <span class="icon">↺</span> Predict Again
+                </button>
+            </div>
+        </section>
+
+        <!-- ============= FOOTER ============= -->
+        <footer class="footer" id="footer">
+            <p class="footer-text">
+                Data sourced from official JoSAA counselling records 2019–2024 | Predictions for 2025–2026 based on historical trend analysis | 
+                Not affiliated with NTA or JoSAA | For guidance only
+            </p>
+            <p class="footer-disclaimer">
+                © 2026 JEE Rank Predictor. Built with accuracy in mind.
+            </p>
+        </footer>
+    </div>
+
+    <!-- Loading overlay with ASCII spinner -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="loader-content">
+            <div class="loader-spinner" id="loaderSpinner">[    ]</div>
+            <p class="loader-text" id="loaderText">Analyzing your profile...</p>
+        </div>
+    </div>
+
+    <!-- Expandable row detail (accordion) - inserted dynamically -->
+    <template id="expandedRowTemplate">
+        <tr class="expanded-row">
+            <td colspan="10">
+                <div class="accordion-content">
+                    <div class="accordion-section">
+                        <h4>Round-wise Cutoff Trends</h4>
+                        <table class="inner-table">
+                            <thead>
+                                <tr>
+                                    <th>Round</th>
+                                    <th>Opening Rank</th>
+                                    <th>Closing Rank</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roundTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="accordion-section">
+                        <h4>Closing Rank Trend Chart</h4>
+                        <div class="chart-container">
+                            <canvas class="round-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="accordion-section">
+                        <h4>Institute Information</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Location</span>
+                                <span class="info-value" id="instituteLocation">--</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">NIRF Rank</span>
+                                <span class="info-value" id="instituteNIRF">--</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Established</span>
+                                <span class="info-value" id="instituteEstablished">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </template>
+
+    <!-- Local app script -->
+    <script src="app.js"></script>
+</body>
+</html>
