@@ -5,9 +5,9 @@
 // ===== CONFIG =====
 const CONFIG = {
     // Toggle between local dev and production
-    USE_LOCAL: true,
+    USE_LOCAL: false,
     LOCAL_API: 'http://localhost:8080',
-    PROD_API: 'https://your-render-app.onrender.com',
+    PROD_API: 'https://jee-rank-backend.onrender.com',
 };
 
 const API_BASE = CONFIG.USE_LOCAL ? CONFIG.LOCAL_API : CONFIG.PROD_API;

@@ -1,0 +1,11 @@
+{
+  "name": "jee-rank-predictor-frontend",
+  "version": "1.0.0",
+  "description": "JEE Rank Predictor Frontend",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 8001",
+    "build": "echo 'No build needed for static site'",
+    "start": "python3 -m http.server 8001"
+  }
+}

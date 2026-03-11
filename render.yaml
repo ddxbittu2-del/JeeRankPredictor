@@ -2,8 +2,12 @@ services:
   - type: web
     name: jee-predictor-api
     env: python
-    buildCommand: pip install -r requirements.txt && python scripts/download_data.py --synthetic && python scripts/train_model.py
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port 10000
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
