@@ -711,15 +711,30 @@ const ShareController = {
 const API = {
     async predictRank(payload) {
         try {
-            const response = await fetch(`${API_BASE}/api/predict-rank`, {
+            const url = `${API_BASE}/api/predict-rank`;
+            console.log('🔵 Calling API:', url);
+            console.log('📦 Payload:', payload);
+            
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-            if (!response.ok) throw new Error('API error');
-            return await response.json();
+            
+            console.log('📊 Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ API error response:', errorText);
+                throw new Error(`API error: ${response.status} - ${errorText}`);
+            }
+            
+            const data = await response.json();
+            console.log('✅ API response:', data);
+            return data;
         } catch (error) {
-            console.error('predictRank error:', error);
+            console.error('❌ predictRank error:', error);
+            alert(`Error: ${error.message}\n\nAPI: ${API_BASE}\n\nCheck browser console for details.`);
             return null;
         }
     },
